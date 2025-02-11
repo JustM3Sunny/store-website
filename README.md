@@ -38,7 +38,7 @@ Follow these instructions to get the project up and running on your local machin
 1.  Clone the repository:
 
     ```bash
-    git clone [https://github.com/JustM3Sunny/WEBB.git]
+    git clone https://github.com/JustM3Sunny/WEBB.git
     cd portfolio-react
     ```
 
@@ -77,3 +77,32 @@ Follow these instructions to get the project up and running on your local machin
     ```
 
 ## Project Structure
+
+WEBB/
+├── index.html # Main HTML file
+├── src/
+│ ├── App.jsx # Main application component
+│ ├── Canvas.jsx # Canvas animation component
+│ ├── data.js # Data for canvas animations
+│ ├── main.jsx # Entry point for React
+│ ├── index.css # Global styles
+│ ├── App.css # Component-specific styles
+│ └── canvasimage.js # Images for canvas animation
+├── vite.config.js # Vite configuration file
+├── tailwind.config.js # Tailwind CSS configuration file
+├── package.json # Project dependencies and scripts
+├── README.md # This file
+└── .gitignore # Specifies intentionally untracked files that Git should ignore
+
+
+## Contributing
+
+We welcome contributions to VibeeStudios! If you have any ideas or suggestions, feel free to open an issue or submit a pull request.
+
+## License
+
+[Choose a license](https://choosealicense.com/)
+
+---
+
+Copyright © 2024 shanniii
