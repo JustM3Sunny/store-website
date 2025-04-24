@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, useCallback } from "react";
 import canvasImages from "./canvasimage";
 import { useGSAP } from "@gsap/react";
 import gsap from "gsap";
@@ -6,41 +6,56 @@ import gsap from "gsap";
 function Canvas({ details }) {
   const { startIndex, numImages, duration, size, top, left, zIndex } = details;
 
-  const [index, setIndex] = useState({ value: startIndex });
+  const [index, setIndex] = useState(startIndex);
   const canvasRef = useRef(null);
 
-  useGSAP(() => {
-    gsap.to(index, {
-      value: startIndex + numImages - 1,
-      duration: duration,
-      repeat: -1,
-      ease: "linear",
-      onUpdate: () => {
-        setIndex({ value: Math.round(index.value) });
-      },
-    });
+  // Memoize the onUpdate function to prevent unnecessary re-renders
+  const handleGSAPUpdate = useCallback(() => {
+    setIndex(Math.round(index));
+  }, [index]);
 
-    gsap.from(canvasRef.current, {
-      opacity: 0,
-      duration: 1,
-      ease: "power2.inOut",
-    });
-  });
+  useGSAP(
+    () => {
+      gsap.to({}, { // Animate a dummy object instead of the state directly
+        value: startIndex + numImages - 1,
+        duration: duration,
+        repeat: -1,
+        ease: "linear",
+        onUpdate: handleGSAPUpdate,
+        onUpdateParams: [index], // Pass the current index value
+      });
+
+      gsap.from(canvasRef.current, {
+        opacity: 0,
+        duration: 1,
+        ease: "power2.inOut",
+      });
+    },
+    [startIndex, numImages, duration, handleGSAPUpdate] // Dependencies for useGSAP
+  );
 
   useEffect(() => {
     const scale = window.devicePixelRatio;
     const canvas = canvasRef.current;
-    const ctx = canvas.getContext("2d");
+    const ctx = canvas?.getContext("2d"); // Optional chaining to prevent errors
+    if (!canvas || !ctx) return; // Exit if canvas or context is not available
+
     const img = new Image();
-    img.src = canvasImages[index.value];
+    img.src = canvasImages[index % canvasImages.length]; // Use modulo to loop through images safely
+
     img.onload = () => {
-      canvas.width = canvas.offsetWidth * scale;
-      canvas.height = canvas.offsetHeight * scale;
-      canvas.style.width = canvas.offsetWidth + "px";
-      canvas.style.height = canvas.offsetHeight + "px";
+      const { offsetWidth, offsetHeight } = canvas;
+      canvas.width = offsetWidth * scale;
+      canvas.height = offsetHeight * scale;
+      canvas.style.width = offsetWidth + "px";
+      canvas.style.height = offsetHeight + "px";
 
       ctx.scale(scale, scale);
-      ctx.drawImage(img, 0, 0, canvas.offsetWidth, canvas.offsetHeight);
+      ctx.drawImage(img, 0, 0, offsetWidth, offsetHeight);
+    };
+
+    img.onerror = () => {
+      console.error(`Failed to load image at index ${index}`);
     };
   }, [index]);
 
