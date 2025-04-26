@@ -2,7 +2,13 @@ import "./index.css";
 import Canvas from "./Canvas";
 import data from "./data";
 import LocomotiveScroll from "locomotive-scroll";
-import { useEffect, useState, useRef, useCallback } from "react";
+import {
+  useEffect,
+  useState,
+  useRef,
+  useCallback,
+  useMemo,
+} from "react";
 import gsap from "gsap";
 
 function App() {
@@ -52,7 +58,9 @@ function App() {
   const handleHover = useCallback((isHovering) => {
     gsap.to(mouseFollowerRef.current, {
       scale: isHovering ? 3 : 1,
-      backgroundColor: isHovering ? "rgba(255, 255, 255, 0.188)" : "transparent",
+      backgroundColor: isHovering
+        ? "rgba(255, 255, 255, 0.188)"
+        : "transparent",
       duration: 0.3,
     });
   }, []);
@@ -107,6 +115,35 @@ function App() {
     }
   }, []);
 
+  const navLinks = useMemo(
+    () => ["What we do", "Who we are", "How we give back", "Talk to us"],
+    []
+  );
+
+  const services = useMemo(
+    () => ["Web Development", "UI/UX Design", "Brand Strategy"],
+    []
+  );
+
+  const teamMemberImages = useMemo(
+    () => [
+      "https://images.unsplash.com/photo-1576153192396-180ecef2a715?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8NDZ8fHdlYiUyMGRlc2lnbnxlbnwwfHwwfHx8MA%3D%3D",
+      "https://images.unsplash.com/photo-1576153192396-180ecef2a715?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8NDZ8fHdlYiUyMGRlc2lnbnxlbnwwfHwwfHx8MA%3D%3D",
+      "https://images.unsplash.com/photo-1494438639946-1ebd1d20bf85?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8NTh8fHdlYiUyMGRlc2lnbnxlbnwwfHwwfHx8MA%3D%3D",
+      "https://images.unsplash.com/photo-1504805572947-34fad45aed93?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8NzF8fHdlYiUyMGRlc2lnbnxlbnwwfHwwfHx8MA%3D%3D",
+    ],
+    []
+  );
+
+  const projectImages = useMemo(
+    () => [
+      "https://plus.unsplash.com/premium_photo-1739226530811-0c81c85fbd4e?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxmZWF0dXJlZC1waG90b3MtZmVlZHwxM3x8fGVufDB8fHx8fA%3D%3D",
+      "https://images.pexels.com/photos/3769024/pexels-photo-3769024.jpeg?auto=compress&cs=tinysrgb&w=500",
+      "https://images.pexels.com/photos/3769022/pexels-photo-3769022.jpeg?auto=compress&cs=tinysrgb&w=500",
+    ],
+    []
+  );
+
   return (
     <>
       <div
@@ -130,15 +167,10 @@ function App() {
               VibeeStudios
             </div>
             <div className="links flex gap-10">
-              {[
-                "What we do",
-                "Who we are",
-                "How we give back",
-                "Talk to us",
-              ].map((link, index) => (
+              {navLinks.map((link, index) => (
                 <a
                   key={index}
-                  href={`#${link.toLowerCase()}`}
+                  href={`#${link.toLowerCase().replace(/\s+/g, "-")}`}
                   className="text-md hover:text-pink-200 transition-colors relative group"
                   onMouseEnter={() => handleHover(true)}
                   onMouseLeave={() => handleHover(false)}
@@ -177,22 +209,21 @@ function App() {
         <div className="max-w-7xl mx-auto">
           <h2 className="text-6xl mb-10 font-medium">Our Services</h2>
           <div className="grid grid-cols-3 gap-8">
-            {[
-              "Web Development",
-              "UI/UX Design",
-              "Brand Strategy",
-            ].map((service, index) => (
+            {services.map((service, index) => (
               <div
                 key={index}
                 className="p-8 rounded-2xl bg-gradient-to-br from-black/30 to-black/10 hover:bg-black/40 transition-all group"
               >
-                <div className="text-4xl mb-4 text-pink-200">0{index + 1}</div>
+                <div className="text-4xl mb-4 text-pink-200">
+                  {String(index + 1).padStart(2, "0")}
+                </div>
                 <h3 className="text-3xl mb-4">{service}</h3>
                 <p className="text-lg opacity-80">
                   <img
                     className="rounded-full"
                     src="https://images.unsplash.com/photo-1513506003901-1e6a229e2d15?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTQzfHx3ZWIlMjBkZXNpZ258ZW58MHx8MHx8fDA%3D%3D"
                     alt={service}
+                    loading="lazy"
                   />
                   here you can add something
                 </p>
@@ -230,20 +261,16 @@ function App() {
             </p>
           </div>
           <div className="grid grid-cols-4 gap-6">
-            {[1, 2, 3, 4].map((_, index) => (
+            {[0, 1, 2, 3].map((index) => (
               <div
                 key={index}
                 className="aspect-square  rounded-2xl overflow-hidden group relative"
               >
                 <img
-                  src={[
-                    "https://images.unsplash.com/photo-1576153192396-180ecef2a715?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8NDZ8fHdlYiUyMGRlc2lnbnxlbnwwfHwwfHx8MA%3D%3D",
-                    "https://images.unsplash.com/photo-1576153192396-180ecef2a715?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8NDZ8fHdlYiUyMGRlc2lnbnxlbnwwfHwwfHx8MA%3D%3D",
-                    "https://images.unsplash.com/photo-1494438639946-1ebd1d20bf85?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8NTh8fHdlYiUyMGRlc2lnbnxlbnwwfHwwfHx8MA%3D%3D",
-                    "https://images.unsplash.com/photo-1504805572947-34fad45aed93?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8NzF8fHdlYiUyMGRlc2lnbnxlbnwwfHwwfHx8MA%3D%3D",
-                  ][index]}
+                  src={teamMemberImages[index]}
                   className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                   alt="Team member"
+                  loading="lazy"
                 />
                 <div className="absolute bottom-0 left-0 p-6 bg-gradient-to-t from-black/80 w-full">
                   <h3 className="text-2xl mb-1">John Doe</h3>
@@ -263,23 +290,16 @@ function App() {
         <div className="max-w-6xl mx-auto">
           <h2 className="text-4xl font-bold text-white mb-16">Our Projects</h2>
           <div className="grid md:grid-cols-3 gap-8">
-            {[
-              "Project 1",
-              "Project 2",
-              "Project 3",
-            ].map((project, index) => (
+            {[0, 1, 2].map((index) => (
               <div
                 key={index}
                 className="group relative overflow-hidden rounded-xl shadow-lg"
               >
                 <img
-                  src={[
-                    "https://plus.unsplash.com/premium_photo-1739226530811-0c81c85fbd4e?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxmZWF0dXJlZC1waG90b3MtZmVlZHwxM3x8fGVufDB8fHx8fA%3D%3D",
-                    "https://images.pexels.com/photos/3769024/pexels-photo-3769024.jpeg?auto=compress&cs=tinysrgb&w=500",
-                    "https://images.pexels.com/photos/3769022/pexels-photo-3769022.jpeg?auto=compress&cs=tinysrgb&w=500",
-                  ][index]}
-                  alt={project}
+                  src={projectImages[index]}
+                  alt={`Project ${index + 1}`}
                   className="w-full h-64 object-cover transition-transform duration-500 group-hover:scale-110"
+                  loading="lazy"
                 />
                 <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
                   <a
@@ -352,6 +372,7 @@ function App() {
                 className="ml-2 rounded-full"
                 src="https://images.unsplash.com/photo-1479920252409-6e3d8e8d4866?w=200&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8ODN8fHdlYiUyMGRlc2lnbnxlbnwwfHwwfHx8MA%3D%3D"
                 alt="Send"
+                loading="lazy"
               />
             </button>
           </form>
