@@ -1,7 +1,18 @@
-const BASE_URL = "https://thirtysixstudio.com";
+const BASE_URL = "https://thirtysixstudio.com/peppers"; // Optimized BASE_URL
 
+/**
+ * Generates an array of image URLs for a given pepper type and count.
+ *
+ * @param {string} baseUrl - The base URL for the images.
+ * @param {string} pepperType - The type of pepper.
+ * @param {number} count - The number of images to generate.
+ * @returns {string[]} An array of image URLs.
+ */
 function generateImageUrls(baseUrl, pepperType, count) {
-  const imageUrls = Array.from({ length: count }, (_, i) => `${baseUrl}/peppers/${pepperType}/${i}.png`);
+  const imageUrls = [];
+  for (let i = 0; i < count; i++) {
+    imageUrls.push(`${baseUrl}/${pepperType}/${i}.png`);
+  }
   return imageUrls;
 }
 

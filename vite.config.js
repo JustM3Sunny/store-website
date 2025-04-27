@@ -6,6 +6,7 @@ import { resolve } from 'path';
 // https://vitejs.dev/config/
 export default defineConfig(({ mode }) => {
   const isProduction = mode === 'production';
+  const generateSourceMap = !isProduction; // Explicitly define sourcemap generation
 
   return {
     plugins: [
@@ -22,14 +23,20 @@ export default defineConfig(({ mode }) => {
       open: true, // Automatically open the browser on server start
     },
     build: {
-      sourcemap: !isProduction, // Generate sourcemaps for easier debugging, disable in production for performance if not needed
+      sourcemap: generateSourceMap, // Generate sourcemaps for easier debugging
       rollupOptions: {
         output: {
           manualChunks(id) {
             if (id.includes('node_modules')) {
               return 'vendor';
             }
-            // Further chunking strategies can be added here for better caching
+            // Prioritize splitting based on file type for better caching
+            if (id.includes('.module.css') || id.includes('.css')) {
+              return 'styles';
+            }
+            if (id.includes('.svg') || id.includes('.png') || id.includes('.jpg') || id.includes('.jpeg') || id.includes('.gif')) {
+              return 'assets';
+            }
           },
           chunkFileNames: 'js/[name]-[hash].js', // Add hash to chunk file names for better caching
           entryFileNames: 'js/[name]-[hash].js', // Add hash to entry file names for better caching
@@ -37,9 +44,12 @@ export default defineConfig(({ mode }) => {
         },
       },
       minify: isProduction, // Enable minification in production
+      assetsInlineLimit: 4096, // Default is 4096, explicitly set for clarity.  Files smaller than this will be base64 encoded.
     },
     esbuild: {
       drop: isProduction ? ['console', 'debugger'] : [], // Remove console.log and debugger statements in production
     },
+    // Add a base URL for deployment to a subdirectory
+    // base: isProduction ? '/your-repo-name/' : '/',
   };
 });

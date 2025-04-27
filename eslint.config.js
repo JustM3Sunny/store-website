@@ -8,7 +8,7 @@ import typescriptEslintParser from '@typescript-eslint/parser';
 
 const isProduction = process.env.NODE_ENV === 'production';
 
-export default [
+const config = [
   { ignores: ['dist'] },
   {
     files: ['**/*.{js,jsx,ts,tsx}'],
@@ -36,27 +36,31 @@ export default [
       '@typescript-eslint': typescriptEslintPlugin,
     },
     extends: [
-      'eslint:recommended',
+      js.configs.recommended, // Use the recommended config from @eslint/js
+      'eslint:recommended', // Redundant, js.configs.recommended already includes this
       'plugin:react/recommended',
       'plugin:react/jsx-runtime',
       'plugin:react-hooks/recommended',
       'plugin:@typescript-eslint/recommended',
     ],
     rules: {
-      'react/jsx-no-target-blank': 'off',
+      'react/jsx-no-target-blank': 'warn', // Changed to warn for better visibility
       'react-refresh/only-export-components': [
-        'warn',
+        isProduction ? 'error' : 'warn', // Promote to error in production
         { allowConstantExport: true },
       ],
       '@typescript-eslint/explicit-function-return-type': 'off',
       '@typescript-eslint/no-explicit-any': 'warn',
       '@typescript-eslint/no-unused-vars': 'warn',
-      'no-unused-vars': 'off',
+      'no-unused-vars': 'off', // Let typescript handle this
       'no-console': isProduction ? 'warn' : 'off',
-      // Add more specific rules as needed
-      'no-debugger': isProduction ? 'warn' : 'off', // Remove debugger statements in production
-      'eqeqeq': 'warn', // Enforce strict equality (=== and !==)
-      'no-unused-expressions': 'warn', // Disallow unused expressions
+      'no-debugger': isProduction ? 'warn' : 'error', // Always error in production
+      'eqeqeq': 'warn',
+      'no-unused-expressions': 'warn',
+      'sort-keys': 'off', // Disable sort-keys rule
+      '@typescript-eslint/consistent-type-imports': 'warn', // Enforce consistent type imports
     },
   },
 ];
+
+export default config;

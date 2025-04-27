@@ -8,34 +8,37 @@ function Canvas({ details }) {
 
   const [index, setIndex] = useState(startIndex);
   const canvasRef = useRef(null);
-  const animationValue = useRef(startIndex); // Ref to hold the animated value
+  const animationValue = useRef(startIndex);
 
-  // Memoize the onUpdate function to prevent unnecessary re-renders
   const handleGSAPUpdate = useCallback(() => {
     animationValue.current = gsap.utils.clamp(startIndex, startIndex + numImages - 1, animationValue.current + 1);
-    setIndex(Math.floor(animationValue.current) % canvasImages.length); // Ensure index stays within bounds
+    setIndex(Math.floor(animationValue.current) % canvasImages.length);
   }, [startIndex, numImages]);
 
   useGSAP(
     () => {
-      gsap.to(animationValue, { // Animate the ref's current property
-        duration: duration,
-        repeat: -1,
-        ease: "linear",
-        overwrite: true, // Prevents conflicts with other GSAP animations
-        modifiers: {
-          current: gsap.utils.unitize(0), // Ensure value stays a number
-        },
-        onUpdate: handleGSAPUpdate,
-      });
+      const ctx = gsap.context(() => {
+        gsap.to(animationValue, {
+          duration: duration,
+          repeat: -1,
+          ease: "linear",
+          overwrite: true,
+          modifiers: {
+            current: gsap.utils.unitize(0),
+          },
+          onUpdate: handleGSAPUpdate,
+        });
 
-      gsap.from(canvasRef.current, {
-        opacity: 0,
-        duration: 1,
-        ease: "power2.inOut",
-      });
+        gsap.from(canvasRef.current, {
+          opacity: 0,
+          duration: 1,
+          ease: "power2.inOut",
+        });
+      }, canvasRef); // Scoping context to the canvasRef
+
+      return () => ctx.revert(); // Cleanup function
     },
-    [startIndex, numImages, duration, handleGSAPUpdate] // Dependencies for useGSAP
+    [startIndex, numImages, duration, handleGSAPUpdate]
   );
 
   useEffect(() => {
@@ -45,9 +48,10 @@ function Canvas({ details }) {
     if (!canvas || !ctx) return;
 
     const img = new Image();
-    img.src = canvasImages[index % canvasImages.length];
+    const imageUrl = canvasImages[index % canvasImages.length];
+    img.src = imageUrl;
 
-    img.onload = () => {
+    const handleImageLoad = () => {
       const { offsetWidth, offsetHeight } = canvas;
       const width = offsetWidth * scale;
       const height = offsetHeight * scale;
@@ -59,25 +63,30 @@ function Canvas({ details }) {
         canvas.style.height = offsetHeight + "px";
       }
 
-      ctx.scale(scale, scale);
-      ctx.clearRect(0, 0, width, height); // Clear the canvas before drawing
+      ctx.setTransform(scale, 0, 0, scale, 0, 0); // More efficient scaling
+      ctx.clearRect(0, 0, canvas.width, canvas.height); // Clear with canvas dimensions
       ctx.drawImage(img, 0, 0, offsetWidth, offsetHeight);
     };
 
-    img.onerror = () => {
-      console.error(`Failed to load image at index ${index}`);
+    const handleImageError = () => {
+      console.error(`Failed to load image: ${imageUrl} at index ${index}`);
     };
 
+    img.onload = handleImageLoad;
+    img.onerror = handleImageError;
+
     return () => {
-      img.onload = null; // Clean up event listeners
+      img.onload = null;
       img.onerror = null;
     };
   }, [index]);
 
+  const randomScrollSpeed = useRef(Math.random().toFixed(1));
+
   return (
     <canvas
       data-scroll
-      data-scroll-speed={Math.random().toFixed(1)}
+      data-scroll-speed={randomScrollSpeed.current}
       ref={canvasRef}
       className="absolute"
       style={{

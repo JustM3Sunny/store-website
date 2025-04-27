@@ -1,18 +1,24 @@
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 import './index.css';
-import App from './App'; // Corrected file extension and simplified import
+import App from './App';
 
 const rootElement = document.getElementById('root');
 
 if (!rootElement) {
-  console.error("Root element with id 'root' not found.  The application may not render correctly.");
+  console.error("Root element with id 'root' not found. The application may not render correctly.");
 } else {
-  const root = createRoot(rootElement);
+  try {
+    const root = createRoot(rootElement);
 
-  root.render(
-    <StrictMode>
-      <App />
-    </StrictMode>
-  );
+    root.render(
+      <StrictMode>
+        <App />
+      </StrictMode>
+    );
+  } catch (error) {
+    console.error("An error occurred during React rendering:", error);
+    // Optionally render a fallback UI here, e.g., a simple error message.
+    // root.render(<div>Error loading application.</div>);
+  }
 }

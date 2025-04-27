@@ -16,7 +16,6 @@ function App() {
   const headingRef = useRef(null);
   const growingSpanRef = useRef(null);
   const mouseFollowerRef = useRef(null);
-  const sectionRefs = useRef([]);
 
   // Initialize Locomotive Scroll
   useEffect(() => {
@@ -144,6 +143,14 @@ function App() {
     []
   );
 
+  const renderCanvases = useMemo(() => {
+    return showCanvas
+      ? data[0].map((canvasdets, index) => (
+          <Canvas key={index} details={canvasdets} />
+        ))
+      : null;
+  }, [showCanvas]);
+
   return (
     <>
       <div
@@ -156,10 +163,7 @@ function App() {
       ></span>
 
       <div className="w-full relative min-h-screen" ref={headingRef}>
-        {showCanvas &&
-          data[0].map((canvasdets, index) => (
-            <Canvas key={index} details={canvasdets} />
-          ))}
+        {renderCanvases}
 
         <div className="w-full relative z-[1] h-screen sticky top-0">
           <nav className="w-full p-8 flex justify-between z-50 fixed top-0">
@@ -224,6 +228,8 @@ function App() {
                     src="https://images.unsplash.com/photo-1513506003901-1e6a229e2d15?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTQzfHx3ZWIlMjBkZXNpZ258ZW58MHx8MHx8fDA%3D%3D"
                     alt={service}
                     loading="lazy"
+                    width={500} //Added width and height attributes
+                    height={300}
                   />
                   here you can add something
                 </p>
@@ -235,6 +241,7 @@ function App() {
                       fill="none"
                       stroke="currentColor"
                       viewBox="0 0 24 24"
+                      aria-hidden="true" //Added aria-hidden attribute
                     >
                       <path
                         strokeLinecap="round"
@@ -261,16 +268,18 @@ function App() {
             </p>
           </div>
           <div className="grid grid-cols-4 gap-6">
-            {[0, 1, 2, 3].map((index) => (
+            {teamMemberImages.map((image, index) => (
               <div
                 key={index}
                 className="aspect-square  rounded-2xl overflow-hidden group relative"
               >
                 <img
-                  src={teamMemberImages[index]}
+                  src={image}
                   className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                  alt="Team member"
+                  alt={`Team member ${index + 1}`}
                   loading="lazy"
+                  width={500} //Added width and height attributes
+                  height={300}
                 />
                 <div className="absolute bottom-0 left-0 p-6 bg-gradient-to-t from-black/80 w-full">
                   <h3 className="text-2xl mb-1">John Doe</h3>
@@ -282,24 +291,22 @@ function App() {
         </div>
       </section>
 
-      <div
-        className="section py-20 px-6 md:px-20 border-t-1 bg-white-300-900"
-        data-scroll-section
-        ref={(el) => (sectionRefs.current[3] = el)}
-      >
+      <div className="section py-20 px-6 md:px-20 border-t-1 bg-white-300-900">
         <div className="max-w-6xl mx-auto">
           <h2 className="text-4xl font-bold text-white mb-16">Our Projects</h2>
           <div className="grid md:grid-cols-3 gap-8">
-            {[0, 1, 2].map((index) => (
+            {projectImages.map((image, index) => (
               <div
                 key={index}
                 className="group relative overflow-hidden rounded-xl shadow-lg"
               >
                 <img
-                  src={projectImages[index]}
+                  src={image}
                   alt={`Project ${index + 1}`}
                   className="w-full h-64 object-cover transition-transform duration-500 group-hover:scale-110"
                   loading="lazy"
+                  width={500} //Added width and height attributes
+                  height={300}
                 />
                 <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
                   <a
@@ -355,16 +362,19 @@ function App() {
               type="text"
               placeholder="Name"
               className="w-full bg-transparent border-b border-white/20 py-3 focus:border-pink-200 outline-none"
+              aria-label="Name" // Added aria-label for accessibility
             />
             <input
               type="email"
               placeholder="Email"
               className="w-full bg-transparent border-b border-white/20 py-3 focus:border-pink-200 outline-none"
+              aria-label="Email" // Added aria-label for accessibility
             />
             <textarea
               rows="5"
               placeholder="Message"
               className="w-full bg-transparent border-b border-white/20 py-3 focus:border-pink-200 outline-none"
+              aria-label="Message" // Added aria-label for accessibility
             />
             <button className="px-4 py-2 bg-pink-200 rounded-full hover:bg-pink-300 transition-colors flex items-center justify-center">
               Send Message
@@ -373,6 +383,8 @@ function App() {
                 src="https://images.unsplash.com/photo-1479920252409-6e3d8e8d4866?w=200&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8ODN8fHdlYiUyMGRlc2lnbnxlbnwwfHwwfHx8MA%3D%3D"
                 alt="Send"
                 loading="lazy"
+                width={20} //Added width and height attributes
+                height={20}
               />
             </button>
           </form>
