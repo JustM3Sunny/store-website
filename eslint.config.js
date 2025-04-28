@@ -36,17 +36,18 @@ const config = [
       '@typescript-eslint': typescriptEslintPlugin,
     },
     extends: [
-      js.configs.recommended, // Use the recommended config from @eslint/js
-      'eslint:recommended', // Redundant, js.configs.recommended already includes this
+      js.configs.recommended,
       'plugin:react/recommended',
       'plugin:react/jsx-runtime',
       'plugin:react-hooks/recommended',
       'plugin:@typescript-eslint/recommended',
+      'plugin:@typescript-eslint/stylistic', // Add stylistic rules
+      'plugin:@typescript-eslint/recommended-type-checked', // Enable type-aware linting
     ],
     rules: {
-      'react/jsx-no-target-blank': 'warn', // Changed to warn for better visibility
+      'react/jsx-no-target-blank': 'warn',
       'react-refresh/only-export-components': [
-        isProduction ? 'error' : 'warn', // Promote to error in production
+        isProduction ? 'error' : 'warn',
         { allowConstantExport: true },
       ],
       '@typescript-eslint/explicit-function-return-type': 'off',
@@ -54,11 +55,19 @@ const config = [
       '@typescript-eslint/no-unused-vars': 'warn',
       'no-unused-vars': 'off', // Let typescript handle this
       'no-console': isProduction ? 'warn' : 'off',
-      'no-debugger': isProduction ? 'warn' : 'error', // Always error in production
+      'no-debugger': isProduction ? 'warn' : 'error',
       'eqeqeq': 'warn',
       'no-unused-expressions': 'warn',
-      'sort-keys': 'off', // Disable sort-keys rule
-      '@typescript-eslint/consistent-type-imports': 'warn', // Enforce consistent type imports
+      'sort-keys': 'off',
+      '@typescript-eslint/consistent-type-imports': 'warn',
+      '@typescript-eslint/no-floating-promises': 'warn', // Prevent unhandled promise rejections
+      '@typescript-eslint/no-misused-promises': 'error', // Prevent using promises in wrong places
+      '@typescript-eslint/restrict-template-expressions': 'warn', // Enforce template expression types
+      '@typescript-eslint/no-unsafe-argument': 'warn', // Prevent unsafe arguments
+      '@typescript-eslint/no-unsafe-assignment': 'warn', // Prevent unsafe assignments
+      '@typescript-eslint/no-unsafe-call': 'warn', // Prevent unsafe calls
+      '@typescript-eslint/no-unsafe-member-access': 'warn', // Prevent unsafe member access
+      '@typescript-eslint/no-unsafe-return': 'warn', // Prevent unsafe returns
     },
   },
 ];

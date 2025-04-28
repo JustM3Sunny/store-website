@@ -6,7 +6,7 @@ import { resolve } from 'path';
 // https://vitejs.dev/config/
 export default defineConfig(({ mode }) => {
   const isProduction = mode === 'production';
-  const generateSourceMap = !isProduction; // Explicitly define sourcemap generation
+  const generateSourceMap = !isProduction;
 
   return {
     plugins: [
@@ -15,41 +15,48 @@ export default defineConfig(({ mode }) => {
     ],
     resolve: {
       alias: {
-        '@': resolve(__dirname, 'src'), // Alias for easy imports from src directory
+        '@': resolve(__dirname, 'src'),
       },
     },
     server: {
-      port: 3000, // Specify a default port
-      open: true, // Automatically open the browser on server start
+      port: 3000,
+      open: true,
     },
     build: {
-      sourcemap: generateSourceMap, // Generate sourcemaps for easier debugging
+      sourcemap: generateSourceMap,
       rollupOptions: {
         output: {
           manualChunks(id) {
             if (id.includes('node_modules')) {
               return 'vendor';
             }
-            // Prioritize splitting based on file type for better caching
-            if (id.includes('.module.css') || id.includes('.css')) {
+
+            if (/\.module\.css|\.css$/.test(id)) {
               return 'styles';
             }
-            if (id.includes('.svg') || id.includes('.png') || id.includes('.jpg') || id.includes('.jpeg') || id.includes('.gif')) {
+
+            if (/\.(png|jpg|jpeg|gif|svg)$/.test(id)) {
               return 'assets';
             }
           },
-          chunkFileNames: 'js/[name]-[hash].js', // Add hash to chunk file names for better caching
-          entryFileNames: 'js/[name]-[hash].js', // Add hash to entry file names for better caching
-          assetFileNames: '[ext]/[name]-[hash].[ext]', // Add hash to asset file names for better caching
+          chunkFileNames: 'js/[name]-[hash].js',
+          entryFileNames: 'js/[name]-[hash].js',
+          assetFileNames: '[ext]/[name]-[hash].[ext]',
         },
       },
-      minify: isProduction, // Enable minification in production
-      assetsInlineLimit: 4096, // Default is 4096, explicitly set for clarity.  Files smaller than this will be base64 encoded.
+      minify: isProduction,
+      assetsInlineLimit: 4096,
+      // Consider using a more robust approach for large projects
+      // to prevent inlining too many assets.  A function can be used here.
+      // assetsInlineLimit: (assetInfo) => {
+      //   return assetInfo.size < 4096;
+      // },
     },
     esbuild: {
-      drop: isProduction ? ['console', 'debugger'] : [], // Remove console.log and debugger statements in production
+      drop: isProduction ? ['console', 'debugger'] : [],
     },
-    // Add a base URL for deployment to a subdirectory
     // base: isProduction ? '/your-repo-name/' : '/',
+    // Add cache busting for service workers
+    // publicDir: 'public', // Ensure public directory is correctly configured
   };
 });

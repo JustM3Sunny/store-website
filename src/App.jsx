@@ -16,12 +16,12 @@ function App() {
   const headingRef = useRef(null);
   const growingSpanRef = useRef(null);
   const mouseFollowerRef = useRef(null);
+  const locomotiveScrollRef = useRef(null); // Ref for Locomotive Scroll instance
 
   // Initialize Locomotive Scroll
   useEffect(() => {
-    let locomotiveScroll;
     try {
-      locomotiveScroll = new LocomotiveScroll({
+      locomotiveScrollRef.current = new LocomotiveScroll({
         smooth: true,
         smartphone: { smooth: true },
         tablet: { smooth: true },
@@ -32,8 +32,8 @@ function App() {
     }
 
     return () => {
-      if (locomotiveScroll) {
-        locomotiveScroll.destroy();
+      if (locomotiveScrollRef.current) {
+        locomotiveScrollRef.current.destroy();
       }
     };
   }, []);
@@ -69,6 +69,8 @@ function App() {
     const handleClick = (e) => {
       setShowCanvas((prevShowCanvas) => {
         const newShowCanvas = !prevShowCanvas;
+
+        gsap.killTweensOf("body"); // Kill any existing body tweens
 
         if (!prevShowCanvas) {
           gsap.set(growingSpanRef.current, {
@@ -228,8 +230,8 @@ function App() {
                     src="https://images.unsplash.com/photo-1513506003901-1e6a229e2d15?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTQzfHx3ZWIlMjBkZXNpZ258ZW58MHx8MHx8fDA%3D%3D"
                     alt={service}
                     loading="lazy"
-                    width={500} //Added width and height attributes
-                    height={300}
+                    width={50} //Reduced width and height for performance
+                    height={30}
                   />
                   here you can add something
                 </p>
@@ -278,8 +280,8 @@ function App() {
                   className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                   alt={`Team member ${index + 1}`}
                   loading="lazy"
-                  width={500} //Added width and height attributes
-                  height={300}
+                  width={50} //Reduced width and height for performance
+                  height={30}
                 />
                 <div className="absolute bottom-0 left-0 p-6 bg-gradient-to-t from-black/80 w-full">
                   <h3 className="text-2xl mb-1">John Doe</h3>
@@ -305,8 +307,8 @@ function App() {
                   alt={`Project ${index + 1}`}
                   className="w-full h-64 object-cover transition-transform duration-500 group-hover:scale-110"
                   loading="lazy"
-                  width={500} //Added width and height attributes
-                  height={300}
+                  width={50} //Reduced width and height for performance
+                  height={30}
                 />
                 <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
                   <a
@@ -376,7 +378,10 @@ function App() {
               className="w-full bg-transparent border-b border-white/20 py-3 focus:border-pink-200 outline-none"
               aria-label="Message" // Added aria-label for accessibility
             />
-            <button className="px-4 py-2 bg-pink-200 rounded-full hover:bg-pink-300 transition-colors flex items-center justify-center">
+            <button
+              type="submit" // Added type="submit" for form submission
+              className="px-4 py-2 bg-pink-200 rounded-full hover:bg-pink-300 transition-colors flex items-center justify-center"
+            >
               Send Message
               <img
                 className="ml-2 rounded-full"

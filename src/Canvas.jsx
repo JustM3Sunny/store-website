@@ -9,6 +9,7 @@ function Canvas({ details }) {
   const [index, setIndex] = useState(startIndex);
   const canvasRef = useRef(null);
   const animationValue = useRef(startIndex);
+  const imageCache = useRef({}); // Cache images
 
   const handleGSAPUpdate = useCallback(() => {
     animationValue.current = gsap.utils.clamp(startIndex, startIndex + numImages - 1, animationValue.current + 1);
@@ -34,9 +35,9 @@ function Canvas({ details }) {
           duration: 1,
           ease: "power2.inOut",
         });
-      }, canvasRef); // Scoping context to the canvasRef
+      }, canvasRef);
 
-      return () => ctx.revert(); // Cleanup function
+      return () => ctx.revert();
     },
     [startIndex, numImages, duration, handleGSAPUpdate]
   );
@@ -45,13 +46,29 @@ function Canvas({ details }) {
     const scale = window.devicePixelRatio;
     const canvas = canvasRef.current;
     const ctx = canvas?.getContext("2d");
+
     if (!canvas || !ctx) return;
 
-    const img = new Image();
     const imageUrl = canvasImages[index % canvasImages.length];
-    img.src = imageUrl;
 
-    const handleImageLoad = () => {
+    // Check if the image is already cached
+    if (imageCache.current[imageUrl]) {
+      drawImage(imageCache.current[imageUrl]);
+    } else {
+      const img = new Image();
+      img.src = imageUrl;
+
+      img.onload = () => {
+        imageCache.current[imageUrl] = img; // Cache the loaded image
+        drawImage(img);
+      };
+
+      img.onerror = () => {
+        console.error(`Failed to load image: ${imageUrl} at index ${index}`);
+      };
+    }
+
+    function drawImage(img) {
       const { offsetWidth, offsetHeight } = canvas;
       const width = offsetWidth * scale;
       const height = offsetHeight * scale;
@@ -63,21 +80,13 @@ function Canvas({ details }) {
         canvas.style.height = offsetHeight + "px";
       }
 
-      ctx.setTransform(scale, 0, 0, scale, 0, 0); // More efficient scaling
-      ctx.clearRect(0, 0, canvas.width, canvas.height); // Clear with canvas dimensions
+      ctx.setTransform(scale, 0, 0, scale, 0, 0);
+      ctx.clearRect(0, 0, offsetWidth, offsetHeight); // Clear with offset dimensions
       ctx.drawImage(img, 0, 0, offsetWidth, offsetHeight);
-    };
-
-    const handleImageError = () => {
-      console.error(`Failed to load image: ${imageUrl} at index ${index}`);
-    };
-
-    img.onload = handleImageLoad;
-    img.onerror = handleImageError;
+    }
 
     return () => {
-      img.onload = null;
-      img.onerror = null;
+      // No need to nullify onload/onerror as image is cached and reused.
     };
   }, [index]);
 
