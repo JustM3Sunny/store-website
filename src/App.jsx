@@ -16,38 +16,44 @@ function App() {
   const headingRef = useRef(null);
   const growingSpanRef = useRef(null);
   const mouseFollowerRef = useRef(null);
-  const locomotiveScrollRef = useRef(null); // Ref for Locomotive Scroll instance
+  const locomotiveScrollRef = useRef(null);
 
   // Initialize Locomotive Scroll
   useEffect(() => {
+    let locomotiveScrollInstance; // Declare variable to hold the instance
+
     try {
-      locomotiveScrollRef.current = new LocomotiveScroll({
+      locomotiveScrollInstance = new LocomotiveScroll({
         smooth: true,
         smartphone: { smooth: true },
         tablet: { smooth: true },
       });
+      locomotiveScrollRef.current = locomotiveScrollInstance; // Assign to ref
     } catch (error) {
       console.error("Locomotive Scroll initialization error:", error);
-      return; // Exit if Locomotive Scroll fails to initialize
+      return;
     }
 
     return () => {
-      if (locomotiveScrollRef.current) {
-        locomotiveScrollRef.current.destroy();
+      if (locomotiveScrollInstance) {
+        locomotiveScrollInstance.destroy();
       }
     };
   }, []);
 
   // Mouse follower effect
   useEffect(() => {
-    const handleMouseMove = (e) => {
-      gsap.to(mouseFollowerRef.current, {
-        x: e.clientX,
-        y: e.clientY,
-        duration: 0.3,
-        ease: "power2.out",
-      });
-    };
+    const handleMouseMove = useCallback(
+      (e) => {
+        gsap.to(mouseFollowerRef.current, {
+          x: e.clientX,
+          y: e.clientY,
+          duration: 0.3,
+          ease: "power2.out",
+        });
+      },
+      []
+    );
 
     document.addEventListener("mousemove", handleMouseMove);
     return () => document.removeEventListener("mousemove", handleMouseMove);
@@ -66,48 +72,51 @@ function App() {
 
   // Click handler for heading
   useEffect(() => {
-    const handleClick = (e) => {
-      setShowCanvas((prevShowCanvas) => {
-        const newShowCanvas = !prevShowCanvas;
+    const handleClick = useCallback(
+      (e) => {
+        setShowCanvas((prevShowCanvas) => {
+          const newShowCanvas = !prevShowCanvas;
 
-        gsap.killTweensOf("body"); // Kill any existing body tweens
+          gsap.killTweensOf("body");
 
-        if (!prevShowCanvas) {
-          gsap.set(growingSpanRef.current, {
-            top: e.clientY,
-            left: e.clientX,
-          });
+          if (!prevShowCanvas) {
+            gsap.set(growingSpanRef.current, {
+              top: e.clientY,
+              left: e.clientX,
+            });
 
-          gsap.to("body", {
-            color: "#000",
-            backgroundColor: "pink",
-            duration: 1.2,
-            ease: "power2.inOut",
-          });
+            gsap.to("body", {
+              color: "#000",
+              backgroundColor: "pink",
+              duration: 1.2,
+              ease: "power2.inOut",
+            });
 
-          gsap.to(growingSpanRef.current, {
-            scale: 1000,
-            duration: 2,
-            ease: "power2.inOut",
-            onComplete: () => {
-              gsap.set(growingSpanRef.current, {
-                scale: 0,
-                clearProps: "all",
-              });
-            },
-          });
-        } else {
-          gsap.to("body", {
-            color: "#fff",
-            backgroundColor: "#000",
-            duration: 1.2,
-            ease: "power2.inOut",
-          });
-        }
+            gsap.to(growingSpanRef.current, {
+              scale: 1000,
+              duration: 2,
+              ease: "power2.inOut",
+              onComplete: () => {
+                gsap.set(growingSpanRef.current, {
+                  scale: 0,
+                  clearProps: "all",
+                });
+              },
+            });
+          } else {
+            gsap.to("body", {
+              color: "#fff",
+              backgroundColor: "#000",
+              duration: 1.2,
+              ease: "power2.inOut",
+            });
+          }
 
-        return newShowCanvas;
-      });
-    };
+          return newShowCanvas;
+        });
+      },
+      []
+    );
 
     const headingElement = headingRef.current;
     if (headingElement) {
@@ -230,7 +239,7 @@ function App() {
                     src="https://images.unsplash.com/photo-1513506003901-1e6a229e2d15?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTQzfHx3ZWIlMjBkZXNpZ258ZW58MHx8MHx8fDA%3D%3D"
                     alt={service}
                     loading="lazy"
-                    width={50} //Reduced width and height for performance
+                    width={50}
                     height={30}
                   />
                   here you can add something
@@ -243,7 +252,7 @@ function App() {
                       fill="none"
                       stroke="currentColor"
                       viewBox="0 0 24 24"
-                      aria-hidden="true" //Added aria-hidden attribute
+                      aria-hidden="true"
                     >
                       <path
                         strokeLinecap="round"
@@ -280,7 +289,7 @@ function App() {
                   className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                   alt={`Team member ${index + 1}`}
                   loading="lazy"
-                  width={50} //Reduced width and height for performance
+                  width={50}
                   height={30}
                 />
                 <div className="absolute bottom-0 left-0 p-6 bg-gradient-to-t from-black/80 w-full">
@@ -307,7 +316,7 @@ function App() {
                   alt={`Project ${index + 1}`}
                   className="w-full h-64 object-cover transition-transform duration-500 group-hover:scale-110"
                   loading="lazy"
-                  width={50} //Reduced width and height for performance
+                  width={50}
                   height={30}
                 />
                 <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
@@ -359,27 +368,36 @@ function App() {
               </div>
             </div>
           </div>
-          <form className="w-1/2 space-y-6">
+          <form
+            className="w-1/2 space-y-6"
+            onSubmit={(e) => {
+              e.preventDefault();
+              alert("Form submission is not yet implemented.");
+            }}
+          >
             <input
               type="text"
               placeholder="Name"
               className="w-full bg-transparent border-b border-white/20 py-3 focus:border-pink-200 outline-none"
-              aria-label="Name" // Added aria-label for accessibility
+              aria-label="Name"
+              required
             />
             <input
               type="email"
               placeholder="Email"
               className="w-full bg-transparent border-b border-white/20 py-3 focus:border-pink-200 outline-none"
-              aria-label="Email" // Added aria-label for accessibility
+              aria-label="Email"
+              required
             />
             <textarea
               rows="5"
               placeholder="Message"
               className="w-full bg-transparent border-b border-white/20 py-3 focus:border-pink-200 outline-none"
-              aria-label="Message" // Added aria-label for accessibility
+              aria-label="Message"
+              required
             />
             <button
-              type="submit" // Added type="submit" for form submission
+              type="submit"
               className="px-4 py-2 bg-pink-200 rounded-full hover:bg-pink-300 transition-colors flex items-center justify-center"
             >
               Send Message
@@ -388,7 +406,7 @@ function App() {
                 src="https://images.unsplash.com/photo-1479920252409-6e3d8e8d4866?w=200&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8ODN8fHdlYiUyMGRlc2lnbnxlbnwwfHwwfHx8MA%3D%3D"
                 alt="Send"
                 loading="lazy"
-                width={20} //Added width and height attributes
+                width={20}
                 height={20}
               />
             </button>

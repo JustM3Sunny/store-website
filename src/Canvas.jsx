@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState, useCallback } from "react";
+import { useEffect, useRef, useState, useCallback, useMemo } from "react";
 import canvasImages from "./canvasimage";
 import { useGSAP } from "@gsap/react";
 import gsap from "gsap";
@@ -11,10 +11,13 @@ function Canvas({ details }) {
   const animationValue = useRef(startIndex);
   const imageCache = useRef({}); // Cache images
 
+  // Memoize canvasImages.length to prevent unnecessary recalculations
+  const canvasImagesLength = useMemo(() => canvasImages.length, []);
+
   const handleGSAPUpdate = useCallback(() => {
     animationValue.current = gsap.utils.clamp(startIndex, startIndex + numImages - 1, animationValue.current + 1);
-    setIndex(Math.floor(animationValue.current) % canvasImages.length);
-  }, [startIndex, numImages]);
+    setIndex(Math.floor(animationValue.current) % canvasImagesLength);
+  }, [startIndex, numImages, canvasImagesLength]);
 
   useGSAP(
     () => {
@@ -49,7 +52,7 @@ function Canvas({ details }) {
 
     if (!canvas || !ctx) return;
 
-    const imageUrl = canvasImages[index % canvasImages.length];
+    const imageUrl = canvasImages[index % canvasImagesLength];
 
     // Check if the image is already cached
     if (imageCache.current[imageUrl]) {
@@ -63,8 +66,8 @@ function Canvas({ details }) {
         drawImage(img);
       };
 
-      img.onerror = () => {
-        console.error(`Failed to load image: ${imageUrl} at index ${index}`);
+      img.onerror = (error) => {
+        console.error(`Failed to load image: ${imageUrl} at index ${index}`, error);
       };
     }
 
@@ -85,10 +88,7 @@ function Canvas({ details }) {
       ctx.drawImage(img, 0, 0, offsetWidth, offsetHeight);
     }
 
-    return () => {
-      // No need to nullify onload/onerror as image is cached and reused.
-    };
-  }, [index]);
+  }, [index, canvasImagesLength]);
 
   const randomScrollSpeed = useRef(Math.random().toFixed(1));
 

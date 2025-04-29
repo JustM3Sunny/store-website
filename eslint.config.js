@@ -41,7 +41,7 @@ const config = [
       'plugin:react/jsx-runtime',
       'plugin:react-hooks/recommended',
       'plugin:@typescript-eslint/recommended',
-      'plugin:@typescript-eslint/stylistic', // Add stylistic rules
+      'plugin:@typescript-eslint/stylistic-type-checked', // Add stylistic rules with type checking
       'plugin:@typescript-eslint/recommended-type-checked', // Enable type-aware linting
     ],
     rules: {
@@ -68,6 +68,8 @@ const config = [
       '@typescript-eslint/no-unsafe-call': 'warn', // Prevent unsafe calls
       '@typescript-eslint/no-unsafe-member-access': 'warn', // Prevent unsafe member access
       '@typescript-eslint/no-unsafe-return': 'warn', // Prevent unsafe returns
+      '@typescript-eslint/require-await': 'warn', // Enforce using await when returning a promise
+      '@typescript-eslint/no-shadow': 'warn', // Disallow variable declarations from shadowing variables declared in the outer scope
     },
   },
 ];

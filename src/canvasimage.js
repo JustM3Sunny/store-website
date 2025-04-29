@@ -8,11 +8,15 @@ const BASE_URL = "https://thirtysixstudio.com/peppers";
  * @returns {string[]} An array of image URLs.
  */
 function generateImageUrls(pepperType, count) {
-  const imageUrls = Array.from({ length: count }, (_, i) => `${BASE_URL}/${pepperType}/${i}.png`);
+  const imageUrls = [];
+  for (let i = 0; i < count; i++) {
+    imageUrls.push(`${BASE_URL}/${pepperType}/${i}.png`);
+  }
   return imageUrls;
 }
 
 const pepperTypes = ["pepperA", "pepperB", "pepperC", "pepperD", "pepperE", "pepperF", "pepperG"];
-const imageUrls = pepperTypes.flatMap(pepperType => generateImageUrls(pepperType, 150));
+const imageCounts = 150; // Moved the count to a named constant
+const imageUrls = pepperTypes.flatMap(pepperType => generateImageUrls(pepperType, imageCounts));
 
 export default imageUrls;

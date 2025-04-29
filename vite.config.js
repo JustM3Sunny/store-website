@@ -6,7 +6,6 @@ import { resolve } from 'path';
 // https://vitejs.dev/config/
 export default defineConfig(({ mode }) => {
   const isProduction = mode === 'production';
-  const generateSourceMap = !isProduction;
 
   return {
     plugins: [
@@ -21,9 +20,12 @@ export default defineConfig(({ mode }) => {
     server: {
       port: 3000,
       open: true,
+      hmr: {
+        overlay: !isProduction, // Disable overlay in production for cleaner error handling
+      },
     },
     build: {
-      sourcemap: generateSourceMap,
+      sourcemap: !isProduction, // Directly use the boolean value
       rollupOptions: {
         output: {
           manualChunks(id) {
@@ -31,7 +33,7 @@ export default defineConfig(({ mode }) => {
               return 'vendor';
             }
 
-            if (/\.module\.css|\.css$/.test(id)) {
+            if (/\.(module\.css|\.css)$/.test(id)) {
               return 'styles';
             }
 
@@ -51,6 +53,8 @@ export default defineConfig(({ mode }) => {
       // assetsInlineLimit: (assetInfo) => {
       //   return assetInfo.size < 4096;
       // },
+      // target: 'esnext', // Modern browsers support ESNext features
+      // brotliSize: false, // Disable brotli size reporting for faster builds (optional)
     },
     esbuild: {
       drop: isProduction ? ['console', 'debugger'] : [],
