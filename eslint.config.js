@@ -40,9 +40,9 @@ const config = [
       'plugin:react/recommended',
       'plugin:react/jsx-runtime',
       'plugin:react-hooks/recommended',
-      'plugin:@typescript-eslint/recommended',
+      'plugin:@typescript-eslint/recommended-type-checked', // Changed order for better rule application
       'plugin:@typescript-eslint/stylistic-type-checked',
-      'plugin:@typescript-eslint/recommended-type-checked',
+      'plugin:@typescript-eslint/recommended',
     ],
     rules: {
       'react/jsx-no-target-blank': 'warn',
@@ -71,6 +71,7 @@ const config = [
       '@typescript-eslint/require-await': 'warn',
       '@typescript-eslint/no-shadow': 'warn',
       'no-shadow': 'off', // Disable the base rule as it can conflict with the typescript version
+      'no-undef': 'off', // Disable no-undef rule to avoid conflicts with TypeScript
     },
   },
 ];

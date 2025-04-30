@@ -10,7 +10,7 @@ if (!rootElement) {
   console.error("Root element with id 'root' not found. The application may not render correctly.");
   // Render a fallback UI if the root element is missing.
   const fallbackElement = document.createElement('div');
-  fallbackElement.textContent = 'Error: Root element not found. Please ensure a div with id="root" exists in your HTML.';
+  fallbackElement.textContent = 'Error: Root element not found. Please ensure a div with id=\"root\" exists in your HTML.';
   document.body.appendChild(fallbackElement);
 } else {
   try {
@@ -24,7 +24,7 @@ if (!rootElement) {
   } catch (error) {
     console.error("An error occurred during React rendering:", error);
     // Render a fallback UI in case of rendering errors.
-    const root = createRoot(rootElement); // Re-create root to ensure clean state
+    const root = createRoot(rootElement);
     root.render(
       <StrictMode>
         <div>Error loading application. Please try again later.</div>

@@ -17,7 +17,7 @@ function App() {
   const growingSpanRef = useRef(null);
   const mouseFollowerRef = useRef(null);
   const locomotiveScrollRef = useRef(null);
-  const [isLocomotiveInitialized, setIsLocomotiveInitialized] = useState(false); // Track Locomotive Scroll initialization
+  const [isLocomotiveInitialized, setIsLocomotiveInitialized] = useState(false);
 
   // Initialize Locomotive Scroll
   useEffect(() => {
@@ -30,7 +30,7 @@ function App() {
         tablet: { smooth: true },
       });
       locomotiveScrollRef.current = locomotiveScrollInstance;
-      setIsLocomotiveInitialized(true); // Set initialization flag
+      setIsLocomotiveInitialized(true);
     } catch (error) {
       console.error("Locomotive Scroll initialization error:", error);
       return;
@@ -45,12 +45,14 @@ function App() {
 
   // Mouse follower effect
   const handleMouseMove = useCallback((e) => {
-    gsap.to(mouseFollowerRef.current, {
-      x: e.clientX,
-      y: e.clientY,
-      duration: 0.3,
-      ease: "power2.out",
-    });
+    if (mouseFollowerRef.current) {
+      gsap.to(mouseFollowerRef.current, {
+        x: e.clientX,
+        y: e.clientY,
+        duration: 0.3,
+        ease: "power2.out",
+      });
+    }
   }, []);
 
   useEffect(() => {
@@ -59,12 +61,18 @@ function App() {
   }, [handleMouseMove]);
 
   // Hover effect for links
-  const handleHover = useCallback((isHovering) => {
+  const handleHover = useCallback(() => {
     gsap.to(mouseFollowerRef.current, {
-      scale: isHovering ? 3 : 1,
-      backgroundColor: isHovering
-        ? "rgba(255, 255, 255, 0.188)"
-        : "transparent",
+      scale: 3,
+      backgroundColor: "rgba(255, 255, 255, 0.188)",
+      duration: 0.3,
+    });
+  }, []);
+
+  const handleUnhover = useCallback(() => {
+    gsap.to(mouseFollowerRef.current, {
+      scale: 1,
+      backgroundColor: "transparent",
       duration: 0.3,
     });
   }, []);
@@ -78,29 +86,31 @@ function App() {
         gsap.killTweensOf("body");
 
         if (!prevShowCanvas) {
-          gsap.set(growingSpanRef.current, {
-            top: e.clientY,
-            left: e.clientX,
-          });
+          if (growingSpanRef.current) {
+            gsap.set(growingSpanRef.current, {
+              top: e.clientY,
+              left: e.clientX,
+            });
 
-          gsap.to("body", {
-            color: "#000",
-            backgroundColor: "pink",
-            duration: 1.2,
-            ease: "power2.inOut",
-          });
+            gsap.to("body", {
+              color: "#000",
+              backgroundColor: "pink",
+              duration: 1.2,
+              ease: "power2.inOut",
+            });
 
-          gsap.to(growingSpanRef.current, {
-            scale: 1000,
-            duration: 2,
-            ease: "power2.inOut",
-            onComplete: () => {
-              gsap.set(growingSpanRef.current, {
-                scale: 0,
-                clearProps: "all",
-              });
-            },
-          });
+            gsap.to(growingSpanRef.current, {
+              scale: 1000,
+              duration: 2,
+              ease: "power2.inOut",
+              onComplete: () => {
+                gsap.set(growingSpanRef.current, {
+                  scale: 0,
+                  clearProps: "all",
+                });
+              },
+            });
+          }
         } else {
           gsap.to("body", {
             color: "#fff",
@@ -126,12 +136,12 @@ function App() {
 
   const navLinks = useMemo(
     () => ["What we do", "Who we are", "How we give back", "Talk to us"],
-    []
+    [],
   );
 
   const services = useMemo(
     () => ["Web Development", "UI/UX Design", "Brand Strategy"],
-    []
+    [],
   );
 
   const teamMemberImages = useMemo(
@@ -141,7 +151,7 @@ function App() {
       "https://images.unsplash.com/photo-1494438639946-1ebd1d20bf85?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8NTh8fHdlYiUyMGRlc2lnbnxlbnwwfHwwfHx8MA%3D%3D",
       "https://images.unsplash.com/photo-1504805572947-34fad45aed93?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8NzF8fHdlYiUyMGRlc2lnbnxlbnwwfHwwfHx8MA%3D%3D",
     ],
-    []
+    [],
   );
 
   const projectImages = useMemo(
@@ -150,7 +160,7 @@ function App() {
       "https://images.pexels.com/photos/3769024/pexels-photo-3769024.jpeg?auto=compress&cs=tinysrgb&w=500",
       "https://images.pexels.com/photos/3769022/pexels-photo-3769022.jpeg?auto=compress&cs=tinysrgb&w=500",
     ],
-    []
+    [],
   );
 
   const renderCanvases = useMemo(() => {
@@ -186,8 +196,8 @@ function App() {
                   key={index}
                   href={`#${link.toLowerCase().replace(/\s+/g, "-")}`}
                   className="text-md hover:text-pink-200 transition-colors relative group"
-                  onMouseEnter={() => handleHover(true)}
-                  onMouseLeave={() => handleHover(false)}
+                  onMouseEnter={handleHover}
+                  onMouseLeave={handleUnhover}
                 >
                   {link}
                   <span className="absolute bottom-0 left-0 w-0 h-px bg-pink-200 transition-all duration-300 group-hover:w-full" />

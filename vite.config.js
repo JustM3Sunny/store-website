@@ -51,19 +51,10 @@ export default defineConfig(({ mode }) => {
       },
       minify: isProduction,
       assetsInlineLimit: 4096,
-      // Consider using a more robust approach for large projects
-      // to prevent inlining too many assets.  A function can be used here.
-      // assetsInlineLimit: (assetInfo) => {
-      //   return assetInfo.size < 4096;
-      // },
       target: 'esnext', // Modern browsers support ESNext features
-      // brotliSize: false, // Disable brotli size reporting for faster builds (optional)
     },
     esbuild: {
       drop: isProduction ? ['console', 'debugger'] : [],
     },
-    // base: isProduction ? '/your-repo-name/' : '/',
-    // Add cache busting for service workers
-    // publicDir: 'public', // Ensure public directory is correctly configured
   };
 });
