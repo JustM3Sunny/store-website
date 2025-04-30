@@ -6,6 +6,7 @@ import { resolve } from 'path';
 // https://vitejs.dev/config/
 export default defineConfig(({ mode }) => {
   const isProduction = mode === 'production';
+  const enableSourceMap = !isProduction;
 
   return {
     plugins: [
@@ -25,7 +26,7 @@ export default defineConfig(({ mode }) => {
       },
     },
     build: {
-      sourcemap: !isProduction, // Directly use the boolean value
+      sourcemap: enableSourceMap,
       rollupOptions: {
         output: {
           manualChunks(id) {
@@ -40,6 +41,8 @@ export default defineConfig(({ mode }) => {
             if (/\.(png|jpg|jpeg|gif|svg)$/.test(id)) {
               return 'assets';
             }
+            // Add a default chunk for other files
+            return 'app';
           },
           chunkFileNames: 'js/[name]-[hash].js',
           entryFileNames: 'js/[name]-[hash].js',
@@ -53,7 +56,7 @@ export default defineConfig(({ mode }) => {
       // assetsInlineLimit: (assetInfo) => {
       //   return assetInfo.size < 4096;
       // },
-      // target: 'esnext', // Modern browsers support ESNext features
+      target: 'esnext', // Modern browsers support ESNext features
       // brotliSize: false, // Disable brotli size reporting for faster builds (optional)
     },
     esbuild: {

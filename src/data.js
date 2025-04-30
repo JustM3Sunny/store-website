@@ -80,4 +80,12 @@ const imageConfigurations = RAW_IMAGE_CONFIGURATIONS.map(configSet =>
   configSet.map(config => createImageConfig(config))
 );
 
+// Consider memoizing the result if RAW_IMAGE_CONFIGURATIONS doesn't change often
+// const imageConfigurations = (() => {
+//   const configurations = RAW_IMAGE_CONFIGURATIONS.map(configSet =>
+//     configSet.map(config => createImageConfig(config))
+//   );
+//   return () => configurations;
+// })();
+
 export default imageConfigurations;

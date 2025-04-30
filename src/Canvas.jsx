@@ -9,15 +9,70 @@ function Canvas({ details }) {
   const [index, setIndex] = useState(startIndex);
   const canvasRef = useRef(null);
   const animationValue = useRef(startIndex);
-  const imageCache = useRef({}); // Cache images
+  const imageCache = useRef({});
+  const randomScrollSpeed = useRef(Math.random().toFixed(1));
 
-  // Memoize canvasImages.length to prevent unnecessary recalculations
   const canvasImagesLength = useMemo(() => canvasImages.length, []);
 
   const handleGSAPUpdate = useCallback(() => {
-    animationValue.current = gsap.utils.clamp(startIndex, startIndex + numImages - 1, animationValue.current + 1);
+    animationValue.current = gsap.utils.clamp(
+      startIndex,
+      startIndex + numImages - 1,
+      animationValue.current + 1
+    );
     setIndex(Math.floor(animationValue.current) % canvasImagesLength);
   }, [startIndex, numImages, canvasImagesLength]);
+
+  const drawImage = useCallback(
+    (img) => {
+      const canvas = canvasRef.current;
+      const ctx = canvas?.getContext("2d");
+
+      if (!canvas || !ctx) return;
+
+      const scale = window.devicePixelRatio;
+      const { offsetWidth, offsetHeight } = canvas;
+      const width = offsetWidth * scale;
+      const height = offsetHeight * scale;
+
+      if (canvas.width !== width || canvas.height !== height) {
+        canvas.width = width;
+        canvas.height = height;
+        canvas.style.width = offsetWidth + "px";
+        canvas.style.height = offsetHeight + "px";
+      }
+
+      ctx.setTransform(scale, 0, 0, scale, 0, 0);
+      ctx.clearRect(0, 0, offsetWidth, offsetHeight);
+      ctx.drawImage(img, 0, 0, offsetWidth, offsetHeight);
+    },
+    []
+  );
+
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    const ctx = canvas?.getContext("2d");
+
+    if (!canvas || !ctx) return;
+
+    const imageUrl = canvasImages[index % canvasImagesLength];
+
+    if (imageCache.current[imageUrl]) {
+      drawImage(imageCache.current[imageUrl]);
+    } else {
+      const img = new Image();
+      img.src = imageUrl;
+
+      img.onload = () => {
+        imageCache.current[imageUrl] = img;
+        drawImage(img);
+      };
+
+      img.onerror = (error) => {
+        console.error(`Failed to load image: ${imageUrl} at index ${index}`, error);
+      };
+    }
+  }, [index, canvasImagesLength, drawImage]);
 
   useGSAP(
     () => {
@@ -44,53 +99,6 @@ function Canvas({ details }) {
     },
     [startIndex, numImages, duration, handleGSAPUpdate]
   );
-
-  useEffect(() => {
-    const scale = window.devicePixelRatio;
-    const canvas = canvasRef.current;
-    const ctx = canvas?.getContext("2d");
-
-    if (!canvas || !ctx) return;
-
-    const imageUrl = canvasImages[index % canvasImagesLength];
-
-    // Check if the image is already cached
-    if (imageCache.current[imageUrl]) {
-      drawImage(imageCache.current[imageUrl]);
-    } else {
-      const img = new Image();
-      img.src = imageUrl;
-
-      img.onload = () => {
-        imageCache.current[imageUrl] = img; // Cache the loaded image
-        drawImage(img);
-      };
-
-      img.onerror = (error) => {
-        console.error(`Failed to load image: ${imageUrl} at index ${index}`, error);
-      };
-    }
-
-    function drawImage(img) {
-      const { offsetWidth, offsetHeight } = canvas;
-      const width = offsetWidth * scale;
-      const height = offsetHeight * scale;
-
-      if (canvas.width !== width || canvas.height !== height) {
-        canvas.width = width;
-        canvas.height = height;
-        canvas.style.width = offsetWidth + "px";
-        canvas.style.height = offsetHeight + "px";
-      }
-
-      ctx.setTransform(scale, 0, 0, scale, 0, 0);
-      ctx.clearRect(0, 0, offsetWidth, offsetHeight); // Clear with offset dimensions
-      ctx.drawImage(img, 0, 0, offsetWidth, offsetHeight);
-    }
-
-  }, [index, canvasImagesLength]);
-
-  const randomScrollSpeed = useRef(Math.random().toFixed(1));
 
   return (
     <canvas

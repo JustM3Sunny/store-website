@@ -26,9 +26,9 @@ if (!rootElement) {
     // Render a fallback UI in case of rendering errors.
     const root = createRoot(rootElement); // Re-create root to ensure clean state
     root.render(
-      <React.StrictMode>
+      <StrictMode>
         <div>Error loading application. Please try again later.</div>
-      </React.StrictMode>
+      </StrictMode>
     );
   }
 }

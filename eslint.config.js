@@ -41,8 +41,8 @@ const config = [
       'plugin:react/jsx-runtime',
       'plugin:react-hooks/recommended',
       'plugin:@typescript-eslint/recommended',
-      'plugin:@typescript-eslint/stylistic-type-checked', // Add stylistic rules with type checking
-      'plugin:@typescript-eslint/recommended-type-checked', // Enable type-aware linting
+      'plugin:@typescript-eslint/stylistic-type-checked',
+      'plugin:@typescript-eslint/recommended-type-checked',
     ],
     rules: {
       'react/jsx-no-target-blank': 'warn',
@@ -60,16 +60,17 @@ const config = [
       'no-unused-expressions': 'warn',
       'sort-keys': 'off',
       '@typescript-eslint/consistent-type-imports': 'warn',
-      '@typescript-eslint/no-floating-promises': 'warn', // Prevent unhandled promise rejections
-      '@typescript-eslint/no-misused-promises': 'error', // Prevent using promises in wrong places
-      '@typescript-eslint/restrict-template-expressions': 'warn', // Enforce template expression types
-      '@typescript-eslint/no-unsafe-argument': 'warn', // Prevent unsafe arguments
-      '@typescript-eslint/no-unsafe-assignment': 'warn', // Prevent unsafe assignments
-      '@typescript-eslint/no-unsafe-call': 'warn', // Prevent unsafe calls
-      '@typescript-eslint/no-unsafe-member-access': 'warn', // Prevent unsafe member access
-      '@typescript-eslint/no-unsafe-return': 'warn', // Prevent unsafe returns
-      '@typescript-eslint/require-await': 'warn', // Enforce using await when returning a promise
-      '@typescript-eslint/no-shadow': 'warn', // Disallow variable declarations from shadowing variables declared in the outer scope
+      '@typescript-eslint/no-floating-promises': 'warn',
+      '@typescript-eslint/no-misused-promises': 'error',
+      '@typescript-eslint/restrict-template-expressions': ['warn', { allowAny: true }],
+      '@typescript-eslint/no-unsafe-argument': 'warn',
+      '@typescript-eslint/no-unsafe-assignment': 'warn',
+      '@typescript-eslint/no-unsafe-call': 'warn',
+      '@typescript-eslint/no-unsafe-member-access': 'warn',
+      '@typescript-eslint/no-unsafe-return': 'warn',
+      '@typescript-eslint/require-await': 'warn',
+      '@typescript-eslint/no-shadow': 'warn',
+      'no-shadow': 'off', // Disable the base rule as it can conflict with the typescript version
     },
   },
 ];

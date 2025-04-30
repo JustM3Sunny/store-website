@@ -17,10 +17,11 @@ function App() {
   const growingSpanRef = useRef(null);
   const mouseFollowerRef = useRef(null);
   const locomotiveScrollRef = useRef(null);
+  const [isLocomotiveInitialized, setIsLocomotiveInitialized] = useState(false); // Track Locomotive Scroll initialization
 
   // Initialize Locomotive Scroll
   useEffect(() => {
-    let locomotiveScrollInstance; // Declare variable to hold the instance
+    let locomotiveScrollInstance;
 
     try {
       locomotiveScrollInstance = new LocomotiveScroll({
@@ -28,7 +29,8 @@ function App() {
         smartphone: { smooth: true },
         tablet: { smooth: true },
       });
-      locomotiveScrollRef.current = locomotiveScrollInstance; // Assign to ref
+      locomotiveScrollRef.current = locomotiveScrollInstance;
+      setIsLocomotiveInitialized(true); // Set initialization flag
     } catch (error) {
       console.error("Locomotive Scroll initialization error:", error);
       return;
@@ -42,22 +44,19 @@ function App() {
   }, []);
 
   // Mouse follower effect
-  useEffect(() => {
-    const handleMouseMove = useCallback(
-      (e) => {
-        gsap.to(mouseFollowerRef.current, {
-          x: e.clientX,
-          y: e.clientY,
-          duration: 0.3,
-          ease: "power2.out",
-        });
-      },
-      []
-    );
+  const handleMouseMove = useCallback((e) => {
+    gsap.to(mouseFollowerRef.current, {
+      x: e.clientX,
+      y: e.clientY,
+      duration: 0.3,
+      ease: "power2.out",
+    });
+  }, []);
 
+  useEffect(() => {
     document.addEventListener("mousemove", handleMouseMove);
     return () => document.removeEventListener("mousemove", handleMouseMove);
-  }, []);
+  }, [handleMouseMove]);
 
   // Hover effect for links
   const handleHover = useCallback((isHovering) => {
@@ -71,59 +70,59 @@ function App() {
   }, []);
 
   // Click handler for heading
+  const handleClick = useCallback(
+    (e) => {
+      setShowCanvas((prevShowCanvas) => {
+        const newShowCanvas = !prevShowCanvas;
+
+        gsap.killTweensOf("body");
+
+        if (!prevShowCanvas) {
+          gsap.set(growingSpanRef.current, {
+            top: e.clientY,
+            left: e.clientX,
+          });
+
+          gsap.to("body", {
+            color: "#000",
+            backgroundColor: "pink",
+            duration: 1.2,
+            ease: "power2.inOut",
+          });
+
+          gsap.to(growingSpanRef.current, {
+            scale: 1000,
+            duration: 2,
+            ease: "power2.inOut",
+            onComplete: () => {
+              gsap.set(growingSpanRef.current, {
+                scale: 0,
+                clearProps: "all",
+              });
+            },
+          });
+        } else {
+          gsap.to("body", {
+            color: "#fff",
+            backgroundColor: "#000",
+            duration: 1.2,
+            ease: "power2.inOut",
+          });
+        }
+
+        return newShowCanvas;
+      });
+    },
+    []
+  );
+
   useEffect(() => {
-    const handleClick = useCallback(
-      (e) => {
-        setShowCanvas((prevShowCanvas) => {
-          const newShowCanvas = !prevShowCanvas;
-
-          gsap.killTweensOf("body");
-
-          if (!prevShowCanvas) {
-            gsap.set(growingSpanRef.current, {
-              top: e.clientY,
-              left: e.clientX,
-            });
-
-            gsap.to("body", {
-              color: "#000",
-              backgroundColor: "pink",
-              duration: 1.2,
-              ease: "power2.inOut",
-            });
-
-            gsap.to(growingSpanRef.current, {
-              scale: 1000,
-              duration: 2,
-              ease: "power2.inOut",
-              onComplete: () => {
-                gsap.set(growingSpanRef.current, {
-                  scale: 0,
-                  clearProps: "all",
-                });
-              },
-            });
-          } else {
-            gsap.to("body", {
-              color: "#fff",
-              backgroundColor: "#000",
-              duration: 1.2,
-              ease: "power2.inOut",
-            });
-          }
-
-          return newShowCanvas;
-        });
-      },
-      []
-    );
-
     const headingElement = headingRef.current;
     if (headingElement) {
       headingElement.addEventListener("click", handleClick);
       return () => headingElement.removeEventListener("click", handleClick);
     }
-  }, []);
+  }, [handleClick]);
 
   const navLinks = useMemo(
     () => ["What we do", "Who we are", "How we give back", "Talk to us"],
