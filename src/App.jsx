@@ -31,16 +31,31 @@ function App() {
       });
       locomotiveScrollRef.current = locomotiveScrollInstance;
       setIsLocomotiveInitialized(true);
+
+      // Refresh Locomotive Scroll after content updates (e.g., canvas toggle)
+      const observer = new MutationObserver(() => {
+        if (locomotiveScrollInstance) {
+          locomotiveScrollInstance.update();
+        }
+      });
+
+      observer.observe(document.body, {
+        childList: true,
+        subtree: true,
+        attributes: true,
+        characterData: true,
+      });
+
+      return () => {
+        if (locomotiveScrollInstance) {
+          locomotiveScrollInstance.destroy();
+        }
+        observer.disconnect();
+      };
     } catch (error) {
       console.error("Locomotive Scroll initialization error:", error);
       return;
     }
-
-    return () => {
-      if (locomotiveScrollInstance) {
-        locomotiveScrollInstance.destroy();
-      }
-    };
   }, []);
 
   // Mouse follower effect
@@ -169,7 +184,7 @@ function App() {
           <Canvas key={index} details={canvasdets} />
         ))
       : null;
-  }, [showCanvas]);
+  }, [showCanvas, data]);
 
   return (
     <>

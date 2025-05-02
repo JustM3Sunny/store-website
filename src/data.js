@@ -3,12 +3,10 @@ const DEFAULT_IMAGE_PROPERTIES = {
   duration: 3,
 };
 
-const createImageConfig = (baseConfig) => {
-  return {
-    ...DEFAULT_IMAGE_PROPERTIES,
-    ...baseConfig,
-  };
-};
+const createImageConfig = (baseConfig) => ({
+  ...DEFAULT_IMAGE_PROPERTIES,
+  ...baseConfig,
+});
 
 const RAW_IMAGE_CONFIGURATIONS = [
   [
@@ -79,13 +77,5 @@ const RAW_IMAGE_CONFIGURATIONS = [
 const imageConfigurations = RAW_IMAGE_CONFIGURATIONS.map(configSet =>
   configSet.map(config => createImageConfig(config))
 );
-
-// Consider memoizing the result if RAW_IMAGE_CONFIGURATIONS doesn't change often
-// const imageConfigurations = (() => {
-//   const configurations = RAW_IMAGE_CONFIGURATIONS.map(configSet =>
-//     configSet.map(config => createImageConfig(config))
-//   );
-//   return () => configurations;
-// })();
 
 export default imageConfigurations;

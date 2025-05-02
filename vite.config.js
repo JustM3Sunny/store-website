@@ -52,6 +52,8 @@ export default defineConfig(({ mode }) => {
       minify: isProduction,
       assetsInlineLimit: 4096,
       target: 'esnext', // Modern browsers support ESNext features
+      // Enable brotli compression for production builds
+      brotliSize: isProduction,
     },
     esbuild: {
       drop: isProduction ? ['console', 'debugger'] : [],

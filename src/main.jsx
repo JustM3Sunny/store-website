@@ -16,15 +16,21 @@ if (!rootElement) {
   try {
     const root = createRoot(rootElement);
 
-    root.render(
-      <StrictMode>
-        <App />
-      </StrictMode>
-    );
+    const renderApp = () => {
+      root.render(
+        <StrictMode>
+          <App />
+        </StrictMode>
+      );
+    };
+
+    renderApp(); // Initial render
+
   } catch (error) {
     console.error("An error occurred during React rendering:", error);
     // Render a fallback UI in case of rendering errors.
-    const root = createRoot(rootElement);
+    const root = createRoot(rootElement); // Re-create root in error case
+
     root.render(
       <StrictMode>
         <div>Error loading application. Please try again later.</div>

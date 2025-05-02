@@ -6,23 +6,34 @@ const BASE_URL = "https://thirtysixstudio.com/peppers";
  * @param {string} pepperType - The type of pepper.
  * @param {number} count - The number of images to generate.
  * @returns {string[]} An array of image URLs.
+ * @throws {TypeError} If pepperType is not a string.
+ * @throws {TypeError} If count is not a positive integer.
  */
 function generateImageUrls(pepperType, count) {
-  if (!pepperType || typeof pepperType !== 'string') {
-    console.error("Invalid pepperType:", pepperType);
-    return []; // Or throw an error, depending on desired behavior
+  if (typeof pepperType !== 'string') {
+    throw new TypeError("pepperType must be a string.");
   }
 
   if (!Number.isInteger(count) || count <= 0) {
-    console.error("Invalid count:", count);
-    return []; // Or throw an error, depending on desired behavior
+    throw new TypeError("count must be a positive integer.");
   }
 
-  return Array.from({ length: count }, (_, i) => `${BASE_URL}/${pepperType}/${i}.png`);
+  const imageUrls = [];
+  for (let i = 0; i < count; i++) {
+    imageUrls.push(`${BASE_URL}/${pepperType}/${i}.png`);
+  }
+  return imageUrls;
 }
 
 const pepperTypes = ["pepperA", "pepperB", "pepperC", "pepperD", "pepperE", "pepperF", "pepperG"];
 const imageCounts = 150;
-const imageUrls = pepperTypes.flatMap(pepperType => generateImageUrls(pepperType, imageCounts));
+
+let imageUrls = [];
+try {
+  imageUrls = pepperTypes.flatMap(pepperType => generateImageUrls(pepperType, imageCounts));
+} catch (error) {
+  console.error("Error generating image URLs:", error);
+  imageUrls = []; // Or handle the error as appropriate for your application
+}
 
 export default imageUrls;
