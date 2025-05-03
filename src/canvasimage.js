@@ -18,9 +18,9 @@ function generateImageUrls(pepperType, count) {
     throw new TypeError("count must be a positive integer.");
   }
 
-  const imageUrls = [];
+  const imageUrls = Array(count); // Pre-allocate array for performance
   for (let i = 0; i < count; i++) {
-    imageUrls.push(`${BASE_URL}/${pepperType}/${i}.png`);
+    imageUrls[i] = `${BASE_URL}/${pepperType}/${i}.png`; // Direct assignment is faster
   }
   return imageUrls;
 }

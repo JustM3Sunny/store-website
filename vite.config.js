@@ -54,6 +54,8 @@ export default defineConfig(({ mode }) => {
       target: 'esnext', // Modern browsers support ESNext features
       // Enable brotli compression for production builds
       brotliSize: isProduction,
+      // Enable manifest file for production builds
+      manifest: isProduction,
     },
     esbuild: {
       drop: isProduction ? ['console', 'debugger'] : [],

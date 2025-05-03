@@ -184,7 +184,7 @@ function App() {
           <Canvas key={index} details={canvasdets} />
         ))
       : null;
-  }, [showCanvas, data]);
+  }, [showCanvas]);
 
   return (
     <>
@@ -258,14 +258,7 @@ function App() {
                 </div>
                 <h3 className="text-3xl mb-4">{service}</h3>
                 <p className="text-lg opacity-80">
-                  <img
-                    className="rounded-full"
-                    src="https://images.unsplash.com/photo-1513506003901-1e6a229e2d15?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTQzfHx3ZWIlMjBkZXNpZ258ZW58MHx8MHx8fDA%3D%3D"
-                    alt={service}
-                    loading="lazy"
-                    width={50}
-                    height={30}
-                  />
+                  {/* Removed the image here as it's not relevant and causes layout issues */}
                   here you can add something
                 </p>
                 <div className="mt-6 opacity-0 group-hover:opacity-100 transition-opacity">
@@ -313,8 +306,6 @@ function App() {
                   className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                   alt={`Team member ${index + 1}`}
                   loading="lazy"
-                  width={50}
-                  height={30}
                 />
                 <div className="absolute bottom-0 left-0 p-6 bg-gradient-to-t from-black/80 w-full">
                   <h3 className="text-2xl mb-1">John Doe</h3>
@@ -340,8 +331,6 @@ function App() {
                   alt={`Project ${index + 1}`}
                   className="w-full h-64 object-cover transition-transform duration-500 group-hover:scale-110"
                   loading="lazy"
-                  width={50}
-                  height={30}
                 />
                 <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
                   <a
@@ -426,12 +415,10 @@ function App() {
             >
               Send Message
               <img
-                className="ml-2 rounded-full"
+                className="ml-2" // Removed rounded-full as it's not needed and can distort the icon
                 src="https://images.unsplash.com/photo-1479920252409-6e3d8e8d4866?w=200&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8ODN8fHdlYiUyMGRlc2lnbnxlbnwwfHwwfHx8MA%3D%3D"
                 alt="Send"
                 loading="lazy"
-                width={20}
-                height={20}
               />
             </button>
           </form>
