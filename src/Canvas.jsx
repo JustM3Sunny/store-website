@@ -38,16 +38,12 @@ function Canvas({ details }) {
       const width = offsetWidth * scale;
       const height = offsetHeight * scale;
 
-      // Optimize: Only resize if necessary
       if (canvas.width !== width || canvas.height !== height) {
         canvas.width = width;
         canvas.height = height;
+        canvas.style.width = offsetWidth + "px";
+        canvas.style.height = offsetHeight + "px";
       }
-
-      // Ensure canvas style matches the actual size
-      canvas.style.width = offsetWidth + "px";
-      canvas.style.height = offsetHeight + "px";
-
 
       ctx.setTransform(scale, 0, 0, scale, 0, 0);
       ctx.clearRect(0, 0, offsetWidth, offsetHeight);
@@ -56,32 +52,40 @@ function Canvas({ details }) {
     []
   );
 
+  const loadImage = useCallback(
+    (imageUrl) => {
+      return new Promise((resolve, reject) => {
+        if (imageCache.current[imageUrl]) {
+          resolve(imageCache.current[imageUrl]);
+          return;
+        }
+
+        const img = new Image();
+        img.src = imageUrl;
+
+        img.onload = () => {
+          imageCache.current[imageUrl] = img;
+          resolve(img);
+        };
+
+        img.onerror = (error) => {
+          console.error(`Failed to load image: ${imageUrl}`, error);
+          reject(error);
+        };
+      });
+    },
+    []
+  );
+
   useEffect(() => {
-    const canvas = canvasRef.current;
-    const ctx = canvas?.getContext("2d");
-
-    if (!canvas || !ctx) return;
-
     const imageUrl = canvasImages[index % canvasImagesLength];
 
-    // Check if image is already in cache
-    if (imageCache.current[imageUrl]) {
-      drawImage(imageCache.current[imageUrl]);
-      return; // Exit early if image is cached
-    }
-
-    const img = new Image();
-    img.src = imageUrl;
-
-    img.onload = () => {
-      imageCache.current[imageUrl] = img;
-      drawImage(img);
-    };
-
-    img.onerror = (error) => {
-      console.error(`Failed to load image: ${imageUrl} at index ${index}`, error);
-    };
-  }, [index, canvasImagesLength, drawImage]);
+    loadImage(imageUrl)
+      .then(drawImage)
+      .catch((error) => {
+        console.error("Error loading or drawing image:", error);
+      });
+  }, [index, canvasImagesLength, drawImage, loadImage]);
 
   useGSAP(
     () => {
@@ -121,7 +125,7 @@ function Canvas({ details }) {
         top: `${top}%`,
         left: `${left}%`,
         zIndex: `${zIndex}`,
-        imageRendering: 'pixelated', // Add pixelated rendering for crisp images
+        imageRendering: "pixelated",
       }}
       id="canvas"
     ></canvas>

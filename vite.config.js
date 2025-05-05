@@ -56,9 +56,15 @@ export default defineConfig(({ mode }) => {
       brotliSize: isProduction,
       // Enable manifest file for production builds
       manifest: isProduction,
+      // Enable tree shaking
+      treeShaking: true,
+      // Optimize CSS by removing unused styles
+      cssCodeSplit: true,
     },
     esbuild: {
       drop: isProduction ? ['console', 'debugger'] : [],
+      // Minify JS and CSS files
+      minify: isProduction,
     },
   };
 });

@@ -71,7 +71,6 @@ const config = [
       '@typescript-eslint/no-shadow': 'warn',
       'no-shadow': 'off', // Disable the base rule as it can conflict with the typescript version
       'no-undef': 'off', // Disable no-undef rule to avoid conflicts with TypeScript
-      // 'no-unused-vars': 'off', // Redundant, already defined above. Removed this line
     },
   },
 ];

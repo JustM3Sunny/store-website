@@ -184,7 +184,7 @@ function App() {
           <Canvas key={index} details={canvasdets} />
         ))
       : null;
-  }, [showCanvas]);
+  }, [showCanvas, data]);
 
   return (
     <>
