@@ -60,11 +60,21 @@ export default defineConfig(({ mode }) => {
       treeShaking: true,
       // Optimize CSS by removing unused styles
       cssCodeSplit: true,
+      // Consider using terser for more aggressive minification in production
+      // terserOptions: {
+      //   compress: {
+      //     drop_console: isProduction,
+      //   },
+      // },
     },
     esbuild: {
       drop: isProduction ? ['console', 'debugger'] : [],
       // Minify JS and CSS files
       minify: isProduction,
+    },
+    // Add optimizeDeps to pre-bundle dependencies for faster startup
+    optimizeDeps: {
+      include: [], // Add dependencies that are not automatically detected
     },
   };
 });

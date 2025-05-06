@@ -71,6 +71,8 @@ const config = [
       '@typescript-eslint/no-shadow': 'warn',
       'no-shadow': 'off', // Disable the base rule as it can conflict with the typescript version
       'no-undef': 'off', // Disable no-undef rule to avoid conflicts with TypeScript
+      'no-unused-vars': 'off', // Disable the base rule as it can conflict with the typescript version
+      '@typescript-eslint/no-unused-vars': ['warn', { argsIgnorePattern: '^_' }], // Allow unused arguments starting with _
     },
   },
 ];

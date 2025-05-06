@@ -38,6 +38,7 @@ function Canvas({ details }) {
       const width = offsetWidth * scale;
       const height = offsetHeight * scale;
 
+      // Only resize if necessary
       if (canvas.width !== width || canvas.height !== height) {
         canvas.width = width;
         canvas.height = height;
@@ -61,6 +62,7 @@ function Canvas({ details }) {
         }
 
         const img = new Image();
+        img.crossOrigin = "anonymous"; // Add crossOrigin attribute
         img.src = imageUrl;
 
         img.onload = () => {

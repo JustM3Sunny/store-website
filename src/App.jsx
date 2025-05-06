@@ -17,7 +17,8 @@ function App() {
   const growingSpanRef = useRef(null);
   const mouseFollowerRef = useRef(null);
   const locomotiveScrollRef = useRef(null);
-  const [isLocomotiveInitialized, setIsLocomotiveInitialized] = useState(false);
+  const [isLocomotiveInitialized, setIsLocomotiveInitialized] =
+    useState(false);
 
   // Initialize Locomotive Scroll
   useEffect(() => {
@@ -59,20 +60,24 @@ function App() {
   }, []);
 
   // Mouse follower effect
-  const handleMouseMove = useCallback((e) => {
-    if (mouseFollowerRef.current) {
-      gsap.to(mouseFollowerRef.current, {
-        x: e.clientX,
-        y: e.clientY,
-        duration: 0.3,
-        ease: "power2.out",
-      });
-    }
+  const handleMouseMove = useCallback(() => {
+    return (e) => {
+      if (mouseFollowerRef.current) {
+        gsap.to(mouseFollowerRef.current, {
+          x: e.clientX,
+          y: e.clientY,
+          duration: 0.3,
+          ease: "power2.out",
+        });
+      }
+    };
   }, []);
 
   useEffect(() => {
-    document.addEventListener("mousemove", handleMouseMove);
-    return () => document.removeEventListener("mousemove", handleMouseMove);
+    const mouseMoveHandler = handleMouseMove();
+    document.addEventListener("mousemove", mouseMoveHandler);
+    return () =>
+      document.removeEventListener("mousemove", mouseMoveHandler);
   }, [handleMouseMove]);
 
   // Hover effect for links
@@ -151,12 +156,12 @@ function App() {
 
   const navLinks = useMemo(
     () => ["What we do", "Who we are", "How we give back", "Talk to us"],
-    [],
+    []
   );
 
   const services = useMemo(
     () => ["Web Development", "UI/UX Design", "Brand Strategy"],
-    [],
+    []
   );
 
   const teamMemberImages = useMemo(
@@ -166,7 +171,7 @@ function App() {
       "https://images.unsplash.com/photo-1494438639946-1ebd1d20bf85?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8NTh8fHdlYiUyMGRlc2lnbnxlbnwwfHwwfHx8MA%3D%3D",
       "https://images.unsplash.com/photo-1504805572947-34fad45aed93?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8NzF8fHdlYiUyMGRlc2lnbnxlbnwwfHwwfHx8MA%3D%3D",
     ],
-    [],
+    []
   );
 
   const projectImages = useMemo(
@@ -175,7 +180,7 @@ function App() {
       "https://images.pexels.com/photos/3769024/pexels-photo-3769024.jpeg?auto=compress&cs=tinysrgb&w=500",
       "https://images.pexels.com/photos/3769022/pexels-photo-3769022.jpeg?auto=compress&cs=tinysrgb&w=500",
     ],
-    [],
+    []
   );
 
   const renderCanvases = useMemo(() => {
@@ -184,7 +189,7 @@ function App() {
           <Canvas key={index} details={canvasdets} />
         ))
       : null;
-  }, [showCanvas, data]);
+  }, [showCanvas]);
 
   return (
     <>
